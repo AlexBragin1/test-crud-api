@@ -1,11 +1,14 @@
 build:
-	docker-compose build golang-test-restapi
+	docker-compose build test-crud-api
 
 run:
-	docker-compose up golang-test-restapi
+	docker-compose up test-crud-api
+
+test:
+	go test -v ./...
 
 migrate:
-	migrate -path ./schema -database 'postgres://postgres:qwerty@0.0.0.0:5436/postgres?sslmode=disable' up
+	migrate -path ./schema -database 'postgres://postgres:qwerty@0.0.0.0:5432/postgres?sslmode=disable' up
 
 swag:
 	swag init -g cmd/main.go

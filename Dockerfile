@@ -4,10 +4,16 @@ RUN go version
 ENV GOPATH=/
 
 COPY ./ ./
+
+# install psql
 RUN apt-get update
-RUN apt-get -y install postgresql-clien
+RUN apt-get -y install postgresql-client
+
+# make wait-for-postgres.sh executable
 RUN chmod +x wait-for-postgres.sh
 
+# build go app
 RUN go mod download
-RUN go build -o golang-test-restapi ./cmd/main.go
-CMD ["./golang-test-restapi"]
+RUN go build -o test-crud-api ./cmd/main.go
+
+CMD ["./test-crud-api"]

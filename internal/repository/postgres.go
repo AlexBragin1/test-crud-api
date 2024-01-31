@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"test-crud-api/internal/model"
+	"test-crud-api/pkg/filter"
 	"time"
 )
 
@@ -12,18 +13,10 @@ type Storage struct {
 	db *sql.DB
 }
 
-func New(storagePath string, store *Storage) (*Storage, error) {
+func New(db *sql.DB) *Storage {
 
-	db, err := sql.Open("postgres", storagePath)
-	if err != nil {
-		return nil, fmt.Errorf("нет ссоединения с базой", err)
-	}
-	defer db.Close()
-	err = db.Ping()
-	if err != nil {
-		return nil, fmt.Errorf("нет ссоединения с базаой", err)
-	}
-	return &Storage{db: db}, nil
+	return &Storage{db: db}
+
 }
 
 func (s *Storage) GetUserById(ctx context.Context, id string) (model.User, error) {
@@ -35,7 +28,7 @@ func (s *Storage) GetUserById(ctx context.Context, id string) (model.User, error
 	return u, nil
 }
 
-func (s *Storage) CreateUser(ctx context.Context, u model.User, t time.Time) error {
+func (s *Storage) CreateUser(ctx context.Context, u model.User, t int64) error {
 
 	tx, err := s.db.Begin()
 	if err != nil {
@@ -43,7 +36,7 @@ func (s *Storage) CreateUser(ctx context.Context, u model.User, t time.Time) err
 	}
 	createUserQwery := `INSERT INTO  Users (id,  first_name, last_name, age, recording_date) VALUES ($1, $2, $3 ,$4 ,$5) RETURNING id`
 	row := tx.QueryRow(createUserQwery, u.ID, u.FirstName, u.LastName, u.Age, t)
-	fmt.Println(row.Err())
+	fmt.Println(row)
 	if err != nil {
 		tx.Rollback()
 		return err
@@ -61,8 +54,9 @@ func (s *Storage) FindAllUsers(ctx context.Context) ([]model.User, error) {
 	var users []model.User
 	for rows.Next() {
 		var u model.User
-
-		err = rows.Scan(&u.ID, &u.FirstName, &u.LastName, &u.Age, &u.RecordingDate)
+		var t time.Time
+		err = rows.Scan(&u.ID, &u.FirstName, &u.LastName, &u.Age, t)
+		u.RecordingDate = t.Unix()
 		if err != nil {
 			return nil, err
 		}
@@ -77,12 +71,12 @@ func (s *Storage) FindAllUsers(ctx context.Context) ([]model.User, error) {
 	return users, nil
 }
 
-/*
-	func (s* Storage)GetAllUsersWithFilters(filterOptions []Field,)(,error){
-	   if []fields
-
+func (s *Storage) GetAllUsersWithFilters(ctx context.Context, filterOptions []filter.Field) ([]model.User, error) {
+	//	filter
+	var u []model.User
+	return u, nil
 }
-*/
+
 func (s *Storage) DeleteUser(ctx context.Context, id string) error {
 
 	_, err := s.db.Exec("DELETE FROM User WHERE  id = :id", sql.Named("number", id))

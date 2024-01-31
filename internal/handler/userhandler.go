@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"test-crud-api/internal/model"
+	"test-crud-api/pkg/filter"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
@@ -46,30 +47,26 @@ func (h *Handler) createUser(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func NewRandomString(i int) {
-	panic("unimplemented")
+func (h *Handler) getAllUsersWithFilters(w http.ResponseWriter, r *http.Request) {
+	var filteroptions []filter.Field
+	users, err := h.services.GetAllUsersWithFilters(context.TODO(), filteroptions)
+	if err != nil {
+		log.Println("getAllBooks() error:", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	response, err := json.Marshal(users)
+	if err != nil {
+		log.Println("getAllBooks() error:", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Add("Content-Type", "application/json")
+	w.Write(response)
 }
 
-/*
-	func (h *Handler) getAllUsersWithFilter(w http.ResponseWriter, r *http.Request) {
-		users, err := h.service.getAllUsersWithFilter(context.TODO())
-		if err != nil {
-			log.Println("getAllBooks() error:", err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-
-		response, err := json.Marshal(users)
-		if err != nil {
-			log.Println("getAllBooks() error:", err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-
-		w.Header().Add("Content-Type", "application/json")
-		w.Write(response)
-	}
-*/
 func (h *Handler) getUserByID(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "Id")
 	user, err := h.services.GetUserByID(context.TODO(), id)
@@ -93,6 +90,9 @@ func (h *Handler) getUserByID(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Add("Content-Type", "application/json")
 	w.Write(response)
+}
+func (h *Handler) findAllUsers(w http.ResponseWriter, r *http.Request) {
+	h.services.FindAllUsers(context.TODO())
 }
 
 func (h *Handler) deleteUser(w http.ResponseWriter, r *http.Request) {

@@ -1,20 +1,22 @@
-version: "3"
+version: '3.8'
+
 services:
- app:
-   build: .
-   ports:
-     - 8080:8080
-   depends_on:
-    - db
- db:
-   image: postgres
-   environment:
-         POSTGRES_USER: user
-         POSTGRES_PASSWORD: postgres
-         POSTGRES_DB: news_feed_boot
-         PGDATA: /var/lib/postgresql/data
-   networks:
-      - golang-test-restapi
-networks:
-  golang-test-restapi:
-     driver: bridge    
+  todo-app:
+    build: ./
+    command: ./wait-for-postgres.sh db ./test-crud-api
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    environment:
+      - DB_PASSWORD=qwerty
+
+  db:
+    restart: always
+    image: postgres:latest
+    volumes:
+    - ./.database/postgres/data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=qwerty
+    ports:
+      - 5432:5432

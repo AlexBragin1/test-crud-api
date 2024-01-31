@@ -10,15 +10,15 @@ type Handler struct {
 	services *service.Service
 }
 
-func newHandler(services *service.Service) *Handler {
+func NewHandler(services *service.Service) *Handler {
 	return &Handler{services: services}
 }
 func (h *Handler) InitRoutes() chi.Router {
 	r := chi.NewRouter()
 	r.Post("/", h.createUser)
-	r.Post("/{id}", h.deleteUser)
-	//r.GET("/users", h.getAllUsersWithFilter)
-	r.Get("/users/{id}", h.getUserByID)
+	r.Get("/users", h.getAllUsersWithFilters)
+	r.Get("/users", h.findAllUsers)
+	r.Get("/users/{id}{id}:{id}", h.getUserByID)
 	r.Post("/{id}", h.deleteUser)
 
 	return r

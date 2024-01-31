@@ -33,7 +33,7 @@ type Options interface {
 	GetLimit() int
 	IsToApply() bool
 	AddFiels(name, operator, value, dtype string) error
-	Fields() Field
+	Fields() []Field
 }
 
 func NewOptions(limit int) Options {
