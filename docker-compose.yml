@@ -1,9 +1,9 @@
 version: '3.8'
 
 services:
-  todo-app:
+  test-crud-api:
     build: ./
-    command: ./wait-for-postgres.sh db ./test-crud-api
+    command: ./postgres.sh db ./test-crud-api
     ports:
       - 8080:8080
     depends_on:

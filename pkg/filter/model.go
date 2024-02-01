@@ -3,7 +3,6 @@ package filter
 import "fmt"
 
 const (
-	DataTypeStr  = "string"
 	DataTypeInt  = "int"
 	DataTypeDate = "date"
 

@@ -4,8 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"test-crud-api/internal/model"
 	"test-crud-api/pkg/filter"
@@ -48,13 +50,36 @@ func (h *Handler) createUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) getAllUsersWithFilters(w http.ResponseWriter, r *http.Request) {
-	var filteroptions []filter.Field
+	var filterOptions:=r.Context().Value(filter.OptitionsContextKey).(filter.Options)
+	age:=r.URL.Query().Get("age")
+	
+	if(age!="") {
+	    operator:="="
+	    value:=age
+        if strings.Index(age,":")!=-1{
+		splits:=strings.Split(age,":")
+		operator=splits[0]
+		value=splits[1]
+		}
+		filterOptions.AddField("age",oprator,value,filter.DataTypeInt)
+     }
+	recording_date:=r.URL.Query().Get("recording_date")
+	if(recording_date!=""){
+		if strings.Index(recording_date,":")!=-1{
+
+		} else{
+
+		}
+		filterOptions.AddField("age",oprator,value,filter.DataTypeDate)
+	}
+	
 	users, err := h.services.GetAllUsersWithFilters(context.TODO(), filteroptions)
 	if err != nil {
 		log.Println("getAllBooks() error:", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+	fmt.Println(users)
 
 	response, err := json.Marshal(users)
 	if err != nil {
@@ -93,6 +118,24 @@ func (h *Handler) getUserByID(w http.ResponseWriter, r *http.Request) {
 }
 func (h *Handler) findAllUsers(w http.ResponseWriter, r *http.Request) {
 	h.services.FindAllUsers(context.TODO())
+	users, err := h.services.GetAllUsersWithFilters(context.TODO())
+	if err != nil {
+		log.Println("getAllBooks() error:", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	fmt.Println(users)
+
+	response, err := json.Marshal(users)
+	if err != nil {
+		log.Println("getAllBooks() error:", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Add("Content-Type", "application/json")
+	w.Write(response)
+	
 }
 
 func (h *Handler) deleteUser(w http.ResponseWriter, r *http.Request) {
