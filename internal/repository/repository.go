@@ -12,7 +12,7 @@ import (
 type Repo interface {
 	GetUserById(ctx context.Context, id string) (model.User, error)
 	CreateUser(ctx context.Context, user model.User, t time.Time) error
-	GetAllUsersWithFilters(ctx context.Context, filterOptions filter.Field) ([]model.User, error)
+	GetAllUsersWithFilters(ctx context.Context, filterOptions filter.Options) ([]model.User, error)
 	FindAllUsers(ctx context.Context) error
 	DeleteUser(ctx context.Context, id string) error
 }

@@ -34,7 +34,7 @@ func (s *Service) GetUserByID(ctx context.Context, id string) (model.User, error
 func (s *Service) FindAllUsers(ctx context.Context) ([]model.User, error) {
 	return s.store.FindAllUsers(ctx)
 }
-func (s *Service) GetAllUsersWithFilters(ctx context.Context, filterOptions []filter.Field) ([]model.User, error) {
+func (s *Service) GetAllUsersWithFilters(ctx context.Context, filterOptions filter.Options) ([]model.User, error) {
 
 	return s.store.GetAllUsersWithFilters(ctx, filterOptions)
 }

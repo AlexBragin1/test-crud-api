@@ -71,7 +71,7 @@ func (s *Storage) FindAllUsers(ctx context.Context) ([]model.User, error) {
 	return users, nil
 }
 
-func (s *Storage) GetAllUsersWithFilters(ctx context.Context, filterOptions []filter.Field) ([]model.User, error) {
+func (s *Storage) GetAllUsersWithFilters(ctx context.Context, filterOptions filter.Options) ([]model.User, error) {
 	//	filter
 	var u []model.User
 	return u, nil

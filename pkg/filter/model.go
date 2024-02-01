@@ -30,7 +30,6 @@ type options struct {
 
 type Options interface {
 	GetLimit() int
-	IsToApply() bool
 	AddFiels(name, operator, value, dtype string) error
 	Fields() []Field
 }
@@ -41,15 +40,14 @@ func NewOptions(limit int) Options {
 func (o *options) GetLimit() int {
 	return o.limit
 }
-func (o *options) IsToApply() bool {
-	return o.isToApply
-}
+
 func (o *options) AddFiels(name, operator, value, dtype string) error {
+
 	err := validateOperator(operator)
 	if err != nil {
 		return err
 	}
-	o.isToApply = true
+
 	o.fields = append(o.fields, Field{Name: name,
 		Value:    value,
 		Operator: operator,
