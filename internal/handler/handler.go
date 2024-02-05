@@ -17,8 +17,8 @@ func (h *Handler) InitRoutes() chi.Router {
 	r := chi.NewRouter()
 	r.Post("/", h.createUser)
 	r.Get("/users", h.getAllUsersWithFilters)
-	r.Get("/users/all", h.findAllUsers)
-	r.Get("/users/{id}", h.getUserByID)
+	r.Get("/users/", h.findAllUsers)
+	r.Get("/{id}", h.getUserByID)
 	r.Post("/users/{id}", h.deleteUser)
 
 	return r

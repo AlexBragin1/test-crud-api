@@ -1,4 +1,4 @@
-FROM golang:1.21-buster
+FROM golang:1.22rc2
 
 RUN go version
 ENV GOPATH=/
@@ -10,7 +10,7 @@ RUN apt-get update
 RUN apt-get -y install postgresql-client
 
 #make postgres.sh executable
-RUN chmod +x wait-for-postgres.sh
+RUN chmod +x postgres.sh
 
 # build go app
 RUN go mod download
