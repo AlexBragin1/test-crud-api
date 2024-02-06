@@ -1,8 +1,0 @@
-CREATE TABLE IF NOT EXISTS users 
-(
-id  VARCHAR[10] PRIMARY KEY, 
-first_name VARCHAR[50] NOT NULL, 
-last_name   VARCHAR[50] NOT NULL, 
-age  INTEGER NOT NULL,
-recording_date  TIMESTAMP NOT NULL 
-);

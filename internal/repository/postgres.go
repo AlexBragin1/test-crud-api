@@ -8,8 +8,6 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
-	//"test-crud-api/pkg/filter"
-	//"time"
 )
 
 type Storage struct {
@@ -30,7 +28,7 @@ func (s *Storage) GetUserById(ctx context.Context, id string) (model.User, error
 		return u, err
 	}
 	var t time.Time
-	query := "SELECT id,firstname,lastname,age,recordingdate FROM users WHERE id = $1"
+	query := "select id,firstname,lastname,age,recordingdate from users where id=$1"
 	errQwery := tx.QueryRowContext(ctx, query, u.ID).Scan(&u.ID, &u.FirstName, &u.LastName, &u.Age, &t)
 	if errQwery != nil {
 		tx.Rollback()
@@ -49,7 +47,7 @@ func (s *Storage) CreateUser(ctx context.Context, u model.User, t time.Time) err
 		return err
 	}
 	createUserQwery := "INSERT INTO  users (id, first_name, last_name, age, recording_date) VALUES ($1, $2, $3 ,$4 ,$5)"
-	_, errExec := tx.ExecContext(ctx, createUserQwery, u.ID, u.FirstName, u.LastName, u.Age, t)
+	_, errExec := tx.ExecContext(ctx, createUserQwery, u.ID, u.FirstName, u.LastName, u.Age, t.Format("2001-09-29 00:00:00"))
 	if errExec != nil {
 		fmt.Println("Eror2")
 		tx.Rollback()
@@ -66,7 +64,7 @@ func (s *Storage) FindAllUsers(ctx context.Context) ([]model.User, error) {
 		fmt.Println("Error 1")
 		return nil, err
 	}
-	qwery := "SELECT id, first_name, last_name, age, recording_date FROM users"
+	qwery := "select id,first_name,last_name,age,recording_date from users"
 	rows, errQwery := tx.QueryContext(ctx, qwery)
 	if errQwery != nil {
 		tx.Rollback()
@@ -94,11 +92,37 @@ func (s *Storage) FindAllUsers(ctx context.Context) ([]model.User, error) {
 }
 
 func (s *Storage) GetAllUsersWithFilter(ctx context.Context, filterOptions filter.Options) ([]model.User, error) {
-	//	filter
-	var u []model.User
-	filterOptions.Fields()
 
-	return u, nil
+	tx, err := s.db.Begin()
+	if err != nil {
+		fmt.Println("Error 1")
+		return nil, err
+	}
+	qwery := fmt.Sprintf("delete id,first_name,last_name,age,recording_date from users where %s", filterOptions.Fields())
+	rows, errQwery := tx.QueryContext(ctx, qwery)
+	if errQwery != nil {
+		tx.Rollback()
+		return nil, err
+	}
+	defer rows.Close()
+	var users []model.User
+	for rows.Next() {
+		var u model.User
+		var t time.Time
+		err = rows.Scan(&u.ID, &u.FirstName, &u.LastName, &u.Age, &t)
+
+		if err != nil {
+			return nil, err
+		}
+		u.RecordingDate = t.Unix()
+		users = append(users, u)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return users, nil
 }
 
 func (s *Storage) DeleteUser(ctx context.Context, id string) error {
@@ -107,7 +131,7 @@ func (s *Storage) DeleteUser(ctx context.Context, id string) error {
 		fmt.Println("Error 1")
 		return err
 	}
-	qwery := "DELETE FROM user WHERE  id = $1"
+	qwery := "delete from users where id=$1"
 	_, errQwery := tx.ExecContext(ctx, qwery, id)
 	if errQwery != nil {
 		tx.Rollback()

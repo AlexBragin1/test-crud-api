@@ -74,7 +74,7 @@ func (h *Handler) getAllUsersWithFilters(w http.ResponseWriter, r *http.Request)
 	}
 	recording_date := r.URL.Query().Get("recording_date")
 	if recording_date != "" {
-		value := age
+		value := recording_date
 		if strings.Index(recording_date, ":") != -1 {
 			operator = filter.OperatorBetween
 
