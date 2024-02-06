@@ -10,7 +10,7 @@ services:
       - db
     environment:
       - DB_PASSWORD=qwerty
-      - POSTGRES_STORAGE="./test-crud-api/config/config.yaml"
+      - POSTGRES_STORAGE=./config/config.yaml
       
   db:
     restart: always
@@ -19,6 +19,6 @@ services:
     - ./.database/postgres/data:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=qwerty
-      - POSTGRES_STORAGE="./test-crud-api/config/config.yaml"
+      - POSTGRES_STORAGE="./config/config.yaml"
     ports:
       - 5433:5432

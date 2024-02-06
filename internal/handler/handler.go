@@ -7,11 +7,11 @@ import (
 )
 
 type Handler struct {
-	services *service.Service
+	Services service.Service
 }
 
-func NewHandler(services *service.Service) *Handler {
-	return &Handler{services: services}
+func NewHandler(services service.Service) *Handler {
+	return &Handler{Services: services}
 }
 func (h *Handler) InitRoutes() chi.Router {
 	r := chi.NewRouter()

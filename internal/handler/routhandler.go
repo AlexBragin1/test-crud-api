@@ -31,12 +31,12 @@ func (h *Handler) createUser(w http.ResponseWriter, r *http.Request) {
 	}*/
 	err := render.DecodeJSON(r.Body, &user)
 	if err != nil {
-		//fmt.Printf("oshibka:", err.Error())
+		//fmt.Printf("Error DecodeJson:", err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	fmt.Println(user)
-	err = h.services.CreateUser(context.TODO(), user)
+	err = h.Services.CreateUser(context.TODO(), user)
 	if err != nil {
 		if errors.Is(err, errors.New("user not found")) {
 			w.WriteHeader(http.StatusBadRequest)
@@ -87,7 +87,7 @@ func (h *Handler) getAllUsersWithFilters(w http.ResponseWriter, r *http.Request)
 		filterOptions.AddFields("recording_date", operator, value, filter.DataTypeDate)
 	}
 
-	users, err := h.services.GetAllUsersWithFilter(context.TODO(), filterOptions)
+	users, err := h.Services.GetAllUsersWithFilter(context.TODO(), filterOptions)
 	if err != nil {
 		log.Println("getAllUsersWithFilter() error:", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -112,7 +112,7 @@ func (h *Handler) getUserByID(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 
 	fmt.Println(id)
-	user, err := h.services.GetUserByID(context.TODO(), id)
+	user, err := h.Services.GetUserById(context.TODO(), id)
 	if err != nil {
 		if errors.Is(err, errors.New("user not found")) {
 			w.WriteHeader(http.StatusBadRequest)
@@ -139,7 +139,7 @@ func (h *Handler) getUserByID(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) findAllUsers(w http.ResponseWriter, r *http.Request) {
 	var users []model.User
-	users, err := h.services.FindAllUsers(context.TODO())
+	users, err := h.Services.FindAllUsers(context.TODO())
 	if err != nil {
 		log.Println("getAllUsersWithFilters() error:", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -153,7 +153,6 @@ func (h *Handler) findAllUsers(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-
 	w.Header().Add("Content-Type", "application/json")
 	w.Write(response)
 
@@ -161,8 +160,9 @@ func (h *Handler) findAllUsers(w http.ResponseWriter, r *http.Request) {
 
 // func deleteUser delete  users by  id
 func (h *Handler) deleteUser(w http.ResponseWriter, r *http.Request) {
-	id := chi.URLParam(r, "Id")
-	err := h.services.DeleteUser(context.TODO(), id)
+	id := chi.URLParam(r, "id")
+	fmt.Println(id)
+	err := h.Services.DeleteUser(context.TODO(), id)
 	if err != nil {
 		log.Println(" deleteUser() error:", err)
 		w.WriteHeader(http.StatusInternalServerError)

@@ -7,45 +7,47 @@ import (
 	"test-crud-api/internal/model"
 	"test-crud-api/internal/repository"
 	"test-crud-api/pkg/filter"
-
-	//"test-crud-api/pkg/filter"
 	"time"
 )
 
-type Service struct {
-	store *repository.Storage
+type UserService struct {
+	Repo repository.Repo
 }
 
-func NewService(store *repository.Storage) *Service {
-	return &Service{store: store}
+func NewService(store repository.Repo) Service {
+	return &UserService{Repo: store}
 }
 
-func (s *Service) CreateUser(ctx context.Context, user model.User) error {
+func (s *UserService) GetUserById(ctx context.Context, id string) (model.User, error) {
+	return s.Repo.GetUserById(ctx, id)
+}
+
+func (s *UserService) CreateUser(ctx context.Context, user model.User) error {
 	var t time.Time
-	if user.ID == "" || len(user.ID) < 10 {
+	if user.ID == "" || len(user.ID) != 10 {
 		user.ID = lib.NewRandomString(10)
 	}
 	fmt.Println(user.ID)
 	if user.RecordingDate == 0 {
 		t = time.Now()
 	} else {
-
+		t = time.Unix(0, user.RecordingDate)
 	}
-	fmt.Println(t)
-	return s.store.CreateUser(ctx, user, t)
+	return s.Repo.CreateUser(ctx, user, t)
 }
 
-func (s *Service) GetUserByID(ctx context.Context, id string) (model.User, error) {
-	return s.store.GetUserById(ctx, id)
+func (s *UserService) DeleteUser(ctx context.Context, id string) error {
+	return s.Repo.DeleteUser(ctx, id)
 }
 
-func (s *Service) FindAllUsers(ctx context.Context) ([]model.User, error) {
-	return s.store.FindAllUsers(ctx)
-}
-func (s *Service) GetAllUsersWithFilter(ctx context.Context, filterOptions filter.Options) ([]model.User, error) {
-	return s.store.GetAllUsersWithFilter(ctx, filterOptions)
+func (s *UserService) GetUserByID(ctx context.Context, id string) (model.User, error) {
+	return s.Repo.GetUserById(ctx, id)
 }
 
-func (s *Service) DeleteUser(ctx context.Context, id string) error {
-	return s.store.DeleteUser(ctx, id)
+func (s *UserService) FindAllUsers(ctx context.Context) ([]model.User, error) {
+	return s.Repo.FindAllUsers(ctx)
+}
+
+func (s *UserService) GetAllUsersWithFilter(ctx context.Context, filterOptions filter.Options) ([]model.User, error) {
+	return s.Repo.GetAllUsersWithFilter(ctx, filterOptions)
 }
