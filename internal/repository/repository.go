@@ -12,10 +12,19 @@ import (
 	_ "github.com/lib/pq"
 )
 
+var myMap = map[string]string{
+	"eg":  "=",
+	"neg": "!=",
+	"lt":  "<",
+	"lte": "<=",
+	"gt":  ">",
+	"gte": ">=",
+}
+
 type Repo interface {
 	GetUserById(ctx context.Context, id string) (model.User, error)
 	CreateUser(ctx context.Context, u model.User, t time.Time) error
-	GetAllUsersWithFilter(ctx context.Context, filterOptions filter.Options) ([]model.User, error)
+	GetAllUsersWithFilter(ctx context.Context, filterOptions filter.Field) ([]model.User, error)
 	FindAllUsers(ctx context.Context) ([]model.User, error)
 	DeleteUser(ctx context.Context, id string) error
 }

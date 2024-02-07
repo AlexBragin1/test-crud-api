@@ -48,6 +48,7 @@ func (s *UserService) FindAllUsers(ctx context.Context) ([]model.User, error) {
 	return s.Repo.FindAllUsers(ctx)
 }
 
-func (s *UserService) GetAllUsersWithFilter(ctx context.Context, filterOptions filter.Options) ([]model.User, error) {
-	return s.Repo.GetAllUsersWithFilter(ctx, filterOptions)
+func (s *UserService) GetAllUsersWithFilter(ctx context.Context, field filter.Field) ([]model.User, error) {
+
+	return s.Repo.GetAllUsersWithFilter(ctx, field)
 }

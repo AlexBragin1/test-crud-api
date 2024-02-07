@@ -8,9 +8,9 @@ import (
 	"fmt"
 
 	"errors"
-
 	"log"
 	"net/http"
+	"strconv"
 
 	"test-crud-api/internal/model"
 	"test-crud-api/pkg/filter"
@@ -55,39 +55,45 @@ func (h *Handler) createUser(w http.ResponseWriter, r *http.Request) {
 //getAllUsersWithFilters output users with filters
 
 func (h *Handler) getAllUsersWithFilters(w http.ResponseWriter, r *http.Request) {
-	var filterOptions filter.Options
+	var filterFields filter.Field
 	var operator string
 	age := r.URL.Query().Get("age")
-
+	fmt.Println(age)
 	if age != "" {
+		filterFields.Name = "age"
 		operator = "="
 		value := age
-		if strings.Index(age, ":") != -1 {
+
+		if strings.Count(age, ":") != 0 {
 			splits := strings.Split(age, ":")
 			operator = splits[0]
 			value = splits[1]
+			fmt.Println(filterFields)
 		}
-		err := filterOptions.AddFields("age", operator, value, filter.DataTypeDate)
-		if err != nil {
-			return
-		}
+		//fmt.Println(age, operator, value, filter.DataTypeInt)
+		filterFields.AddFields(filterFields.Name, value, operator, filter.DataTypeInt)
+		fmt.Println(filterFields)
+
 	}
+
 	recording_date := r.URL.Query().Get("recording_date")
 	if recording_date != "" {
+		filterFields.Name = "recording_date"
 		value := recording_date
-		if strings.Index(recording_date, ":") != -1 {
-			operator = filter.OperatorBetween
+		if strings.Count(recording_date, ":") != 0 {
+			//operator = .Value
 
 		} else {
 			operator = filter.OperatorEq
-			splits := strings.Split(age, ":")
+			splits := strings.Split(recording_date, ":")
 			operator = splits[0]
 			value = splits[1]
 		}
-		filterOptions.AddFields("recording_date", operator, value, filter.DataTypeDate)
-	}
+		filterFields.AddFields(recording_date, value, operator, filter.DataTypeInt)
 
-	users, err := h.Services.GetAllUsersWithFilter(context.TODO(), filterOptions)
+	}
+	fmt.Println(filterFields)
+	users, err := h.Services.GetAllUsersWithFilter(context.TODO(), filterFields)
 	if err != nil {
 		log.Println("getAllUsersWithFilter() error:", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -101,7 +107,9 @@ func (h *Handler) getAllUsersWithFilters(w http.ResponseWriter, r *http.Request)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	w.Header().Add("Content-Type", "application/json")
+	w.Header().Add("Content-Type", "application/text")
+	countToByte := strconv.Itoa(len(users))
+	w.Write([]byte(countToByte))
 	w.Write(response)
 }
 

@@ -6,14 +6,13 @@ const (
 	DataTypeInt  = "int"
 	DataTypeDate = "int64"
 
-	OperatorEq = "eg"
-	//OperatorNotEq         = "neg"
-	//OperatorLowerThan     = "lt"
-	//OperatorLowerThanEq   = "lte"
-	//OperatorGreaterThan   = "gt"
-	//OperatorGreaterThanEq = "gte"
-	OperatorBetween = "between"
-	//OperatorLike          = "Like"
+	OperatorEq            = "eg"
+	OperatorNotEq         = "neg"
+	OperatorLowerThan     = "lt"
+	OperatorLowerThanEq   = "lte"
+	OperatorGreaterThan   = "gt"
+	OperatorGreaterThanEq = "gte"
+	OperatorBetween       = ":"
 )
 
 type Field struct {
@@ -22,56 +21,35 @@ type Field struct {
 	Operator string
 	Type     string
 }
-type options struct {
-	//	isToApply bool
-	limit  int
-	fields []Field
+
+func NewField() *Field {
+	return &Field{}
 }
 
-// AddFiedls implements Options.
-func (*options) AddFiedls(name string, operator string, value string, dtype string) error {
-	panic("unimplemented")
-}
+func (f *Field) AddFields(name, value, operator, dtype string) error {
 
-type Options interface {
-	GetLimit() int
-	AddFields(name, operator, value, dtype string) error
-	Fields() []Field
-}
-
-func NewOptions(limit int) Options {
-	return &options{limit: limit}
-}
-func (o *options) GetLimit() int {
-	return o.limit
-}
-
-func (o *options) AddFields(name, operator, value, dtype string) error {
+	f.Name = name
+	f.Value = value
+	f.Operator = operator
+	f.Type = dtype
 
 	err := validateOperator(operator)
 	if err != nil {
 		return err
 	}
 
-	o.fields = append(o.fields, Field{Name: name,
-		Value:    value,
-		Operator: operator,
-		Type:     dtype,
-	})
 	return nil
 
 }
-func (o *options) Fields() []Field {
-	return o.fields
-}
+
 func validateOperator(operator string) error {
 	switch operator {
 	case OperatorEq:
-	//case OperatorNotEq:
-	//case OperatorLowerThan:
-	//case OperatorLowerThanEq:
-	//case OperatorGreaterThan:
-	//case OperatorGreaterThanEq:
+	case OperatorNotEq:
+	case OperatorLowerThan:
+	case OperatorLowerThanEq:
+	case OperatorGreaterThan:
+	case OperatorGreaterThanEq:
 	case OperatorBetween:
 	default:
 		return fmt.Errorf("bad operator")

@@ -16,7 +16,7 @@ func NewHandler(services service.Service) *Handler {
 func (h *Handler) InitRoutes() chi.Router {
 	r := chi.NewRouter()
 	r.Post("/", h.createUser)
-	r.Get("/users", h.getAllUsersWithFilters)
+	r.Get("/users/api", h.getAllUsersWithFilters)
 	r.Get("/users/", h.findAllUsers)
 	r.Get("/{id}", h.getUserByID)
 	r.Post("/users/{id}", h.deleteUser)
