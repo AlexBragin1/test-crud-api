@@ -57,7 +57,10 @@ func (s *Storage) GetAllUsersWithFilter(ctx context.Context, field filter.Field)
 	fmt.Println(field)
 	tx := s.Db.MustBegin()
 	defer CommitOrRollback(tx)
-	if field.Operator == "=" {
+	if field.Name == "recording_dateTo" {
+		qwery = fmt.Sprintf(`SELECT id, first_name, last_name, age, recording_date FROM users WHERE recording_date < to_timestamp(%s , 'DD/MM/YYYY') 
+		and recording_date > to_timestamp(%s , 'DD/MM/YYYY')`, field.Operator, field.Value)
+	} else if field.Operator == "=" {
 		qwery = `SELECT 
 	id, first_name, last_name, age, recording_date 
 	FROM users`

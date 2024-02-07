@@ -26,4 +26,4 @@ HTTP API
 http://localhost:8080/users?age=lte:14  все  от 0 до 14 
 http://localhost:8080/users?age=lt:14   все от 0 до 14 включительно
 http://localhost:8080/users?age=        все  вывести
-http://localhost:8080/users?recordingdate=3143322:24141414 
+http://localhost:8080/users?recordingdateFrom=3143322&recordingdateTo=24141414 

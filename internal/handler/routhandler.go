@@ -23,19 +23,14 @@ import (
 func (h *Handler) createUser(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("dsdsdsd")
 	var user model.User
-	/*err := json.NewDecoder(r.Body).Decode(&user)
-	if err != nil {
-		fmt.Println("jib,rf", err.Error())
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}*/
+
 	err := render.DecodeJSON(r.Body, &user)
 	if err != nil {
-		//fmt.Printf("Error DecodeJson:", err.Error())
+
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	fmt.Println(user)
+
 	err = h.Services.CreateUser(context.TODO(), user)
 	if err != nil {
 		if errors.Is(err, errors.New("user not found")) {
@@ -68,31 +63,21 @@ func (h *Handler) getAllUsersWithFilters(w http.ResponseWriter, r *http.Request)
 			splits := strings.Split(age, ":")
 			operator = splits[0]
 			value = splits[1]
-			fmt.Println(filterFields)
+
 		}
-		//fmt.Println(age, operator, value, filter.DataTypeInt)
+
 		filterFields.AddFields(filterFields.Name, value, operator, filter.DataTypeInt)
-		fmt.Println(filterFields)
+
+	}
+	recording_dateFrom := r.URL.Query().Get("recordingDateFrom")
+	recording_dateTo := r.URL.Query().Get("recordingDateTo")
+
+	if recording_dateTo != "" && recording_dateFrom != "" {
+
+		filterFields.AddFields("recording_dateTo", recording_dateFrom, recording_dateTo, filter.DataTypeInt)
 
 	}
 
-	recording_date := r.URL.Query().Get("recording_date")
-	if recording_date != "" {
-		filterFields.Name = "recording_date"
-		value := recording_date
-		if strings.Count(recording_date, ":") != 0 {
-			//operator = .Value
-
-		} else {
-			operator = filter.OperatorEq
-			splits := strings.Split(recording_date, ":")
-			operator = splits[0]
-			value = splits[1]
-		}
-		filterFields.AddFields(recording_date, value, operator, filter.DataTypeInt)
-
-	}
-	fmt.Println(filterFields)
 	users, err := h.Services.GetAllUsersWithFilter(context.TODO(), filterFields)
 	if err != nil {
 		log.Println("getAllUsersWithFilter() error:", err)
