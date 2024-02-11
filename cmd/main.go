@@ -36,7 +36,7 @@ func main() {
 			fmt.Printf("error occured while running http server: %s", err.Error())
 		}
 	}()
-	//http.ListenAndServe(":8080", handler.InitRoutes())
+	
 	ch := make(chan os.Signal, 1)
 	signal.Notify(ch, syscall.SIGTERM, syscall.SIGINT)
 	<-ch

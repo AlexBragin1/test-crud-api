@@ -22,7 +22,7 @@ type DB struct {
 }
 
 func LoadDB() *Config {
-	os.Setenv("POSTGRES_STORAGE", "/home/kroot/My_program/test-crud-api/config/config.yaml")
+	//os.Setenv("POSTGRES_STORAGE", "/home/kroot/My_program/test-crud-api/config/config.yaml")
 	configPath := os.Getenv("POSTGRES_STORAGE")
 	if configPath == "" {
 		log.Fatal("CONFIG_PATH is not set")

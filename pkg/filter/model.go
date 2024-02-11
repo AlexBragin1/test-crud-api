@@ -5,6 +5,7 @@ import "fmt"
 const (
 	DataTypeInt  = "int"
 	DataTypeDate = "int64"
+	
 
 	OperatorEq            = "eg"
 	OperatorNotEq         = "neg"

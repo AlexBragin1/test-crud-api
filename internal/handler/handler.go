@@ -19,7 +19,7 @@ func (h *Handler) InitRoutes() chi.Router {
 	r.Get("/users/api", h.getAllUsersWithFilters)
 	r.Get("/users/", h.findAllUsers)
 	r.Get("/{id}", h.getUserByID)
-	r.Post("/users/{id}", h.deleteUser)
+	r.Delete("/users/{id}", h.deleteUser)
 
 	return r
 }
